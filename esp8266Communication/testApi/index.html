@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Data Display</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <table id="container">
+        <tr>
+            <td>Id:</td>
+            <td>IsOpen:</td>
+            <td>Password:</td>
+
+        </tr>
+
+        <tr id="tr0">
+            <td>0</td>
+            <td id="isOpen0">true</td>
+            <td><input id="input0" placeholder="tu wpisujesz hasło" maxlength="4" minlength="4" /><button
+                    id="button0">Zarezerwuj</button></td>
+        </tr>
+
+        <tr id="tr1">
+            <td>1</td>
+            <td id="isOpen1">true</td>
+            <td><input id="input1" placeholder="tu wpisujesz hasło" maxlength="4" minlength="4" /><button
+                    id="button1">Zarezerwuj</button></td>
+        </tr>
+    </table>
+
+    <script>
+        function fetchDevices() {
+            fetch("/devices")
+                .then(res => res.json())
+                .then(devices => {
+
+                    devices.forEach(({ id, isOpen }) => {
+                        const input = document.querySelector(`#input${id}`);
+                        const button = document.querySelector(`#input${id}`);
+                        const isOpenTd = document.querySelector(`#isOpen${id}`);
+                        const tr = document.querySelector(`#tr${id}`);
+
+                        tr.style.backgroundColor = isOpen ? 'green' : 'red';
+                        isOpenTd.textContent = isOpen;
+                        input.disabled = !isOpen;
+                        button.disabled = !isOpen;
+
+                    })
+
+                })
+        }
+
+        fetchDevices();
+
+        const repeat = setInterval(fetchDevices, 1000);
+
+        async function postData(url = "", data = {}) {
+            console.log(JSON.stringify(data));
+            const response = await fetch(url, {
+                method: "POST",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(data),
+            });
+            return response.json();
+        }
+
+
+        button0.addEventListener('click', () => {
+            const data = { id: 0, codeFromUser: parseInt(input0.value) };
+            postData('/lock', data)
+        })
+
+        button1.addEventListener('click', () => {
+            const data = { id: 1, codeFromUser: parseInt(input1.value) };
+            postData('/lock', data)
+
+
+        })
+
+
+    </script>
+
+</body>
+
+</html>

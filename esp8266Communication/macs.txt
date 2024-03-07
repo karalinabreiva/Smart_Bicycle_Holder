@@ -1,0 +1,2 @@
+1 mac (z napisami na tyle): c8:c9:a3:09:e8:3f
+2 mac (bez napisow): c8:c9:a3:06:52:e7
